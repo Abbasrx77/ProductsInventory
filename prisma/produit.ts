@@ -19,7 +19,7 @@ export class ProduitPrismaService {
             skip: skip,
             take: limit,
             where: {
-                OR: query.length > 0 ? query : undefined,
+                OR: query?.length > 0 ? query : undefined,
             }
         });
 

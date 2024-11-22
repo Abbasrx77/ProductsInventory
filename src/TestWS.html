@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Produits en Temps Réel</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #produits-list {
+            list-style-type: none;
+        }
+        .produit-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Liste des Produits</h1>
+    <ul id="produits-list"></ul>
+
+    <script>
+        const socket = io('http://localhost:3000');
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+        socket.on('updatedProduits', (data) => {
+            console.log('Received updated produits:', data);
+            const produitsList = document.getElementById('produits-list');
+            produitsList.innerHTML = '';
+
+            data.data.forEach(produit => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('produit-item');
+                listItem.textContent = `${produit.name}: ${produit.type}, ${produit.price}, ${produit.rating}`;
+                produitsList.appendChild(listItem);
+            });
+        });
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+    </script>
+</body>
+</html>
