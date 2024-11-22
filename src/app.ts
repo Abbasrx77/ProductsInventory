@@ -1,13 +1,15 @@
 import express from 'express';
-import path from 'path';
 import debug0 from "debug";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 import { PrismaClient } from '@prisma/client';
+import usersRouter from "./routes/user.ts"
+import produitRouter from "./routes/produit.ts";
+import {notFound} from "./middlewares/not-found.ts";
+import {errorHandler} from "./middlewares/error-handler.js";
 
 
-const debug = debug0('Chat-API:server');
 const app = express();
 const prisma = new PrismaClient();
 
@@ -16,9 +18,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({origin: '*'}))
 app.use(cookieParser());
-app.use(express.static(path.resolve(__dirname,"..","/public")));
 
+app.use('/', usersRouter);
+app.use('/', produitRouter);
 
+app.use(notFound)
+app.use(errorHandler)
 const port = process.env.PORT || '3000';
 const start_server = async() => {
   try {
